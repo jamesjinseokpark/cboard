@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatMapper">
+
+	<insert id="insert">
+
+
+		INSERT INTO chat( w_id
+		, c_no
+		, c_TITLE
+		, c_CONTENT
+		, c_check)
+		VALUES(#{w_id}
+		,chat_SEQ.NEXTVAL
+		, #{c_title}
+		, #{c_content}
+		, #{c_check} )
+
+
+	</insert>
+
+	<select id="listPage" resultType="kr.co.vo.Chat"
+		parameterType="kr.co.vo.Criteria">
+		SELECT w_id, c_no, c_check, c_date, c_content, c_title
+		FROM (SELECT w_id,
+		c_no, c_check, c_date, c_content, c_title,
+		row_number()
+		over(ORDER BY c_no DESC) as rnum FROM chat) WHERE rnum
+		BETWEEN #{rowStart} AND
+		#{rowEnd}
+		ORDER BY c_no DESC
+	</select>
+
+
+	<select id="listCount" resultType="int">
+
+		SELECT COUNT(c_no)
+		FROM CHAT
+		WHERE c_no > 0
+
+	</select>
+
+
+
+	<select id="read" parameterType="int" resultType="kr.co.vo.Chat">
+
+		SELECT w_id,
+		c_no, c_date, c_content, c_title FROM chat
+		WHERE c_no = #{c_no}
+
+
+	</select>
+
+	<update id="update" parameterType="kr.co.vo.Chat">
+
+		UPDATE CHAT SET w_id =
+		#{w_id},
+		c_check = #{c_check}, c_date = sysdate,
+		c_content =
+		#{c_content},
+		c_title = #{c_title}
+		WHERE c_no = #{c_no}
+
+	</update>
+
+
+	<delete id="delete" parameterType="int">
+		DELETE FROM chat WHERE c_no
+		= #{c_no}
+	</delete>
+
+
+</mapper>
